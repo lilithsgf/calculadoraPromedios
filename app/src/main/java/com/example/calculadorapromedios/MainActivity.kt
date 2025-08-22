@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import com.example.calculadorapromedios.viewmodel.MainViewModel
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import kotlin.getValue
@@ -16,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,26 +34,31 @@ class MainActivity : AppCompatActivity() {
 
         //observa ek promedio calculado
         viewModel.promedio.observe(this, Observer { promedio ->
-            tvresultado.text ="Resultado: ${String.format("%.2f", promedio)}"
+            tvresultado.text = "Resultado: ${String.format("%.2f", promedio)}"
         })
 
         //observa el mensaje de guardado
 
-        viewModel.guardarMensaje.observe(this, Observer{message ->
+        viewModel.guardarMensaje.observe(this, Observer { message ->
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         })
 
         btnCalcular.setOnClickListener {
             try {
-                val n1= etCalificacion1.text.toString().toDouble()
-                val n2= etCalificacion2.text.toString().toDouble()
-                val n3= etCalificacion3.text.toString().toDouble()
+                val n1 = etCalificacion1.text.toString().toDouble()
+                val n2 = etCalificacion2.text.toString().toDouble()
+                val n3 = etCalificacion3.text.toString().toDouble()
 
-                viewModel.calcularPromedio(n1,n2,n3)
-            } catch (Exception) {
-            Toast.makeText(this,"Ingrese valores validos", Toast.LENGTH_SHORT).show()
-        }
+                if (n1 > 20 || n2 > 20 || n3 > 20) {
+                    Toast.makeText(this, "Las calificaciones deben ser menores o iguales a 20", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.calcularPromedio(n1, n2, n3)
+                }
+            } catch (e: NumberFormatException) {
+                Toast.makeText(this, "Ingrese valores validos", Toast.LENGTH_SHORT).show()
+            }
 
 
         }
     }
+}
